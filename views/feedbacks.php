@@ -72,24 +72,21 @@ $buildPageUrl = static function (int $page) use ($query): string {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/feedbacks.css">
+    <link rel="stylesheet" href="assets/css/typography.css">
+    <link rel="stylesheet" href="assets/css/navigation.css">
 </head>
 <body>
 <div class="app-shell">
     <aside class="sidebar">
-        <a class="brand" href="<?= $e($dashboardUrl ?? 'index.php?page=dashboard') ?>" aria-label="Insight CX - início">
-            <span class="brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 40 40" fill="none"><path d="M5 20C5 11.7 11.7 5 20 5s15 6.7 15 15-6.7 15-15 15S5 28.3 5 20Z" stroke="currentColor" stroke-width="2"/><path d="M12 23V18m8 9V13m8 10v-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-            <span class="brand-copy"><strong>INSIGHT CX</strong><small>Transformando experiências em inteligência.</small></span>
-        </a>
+        <a class="brand" href="<?= $e($dashboardUrl ?? 'index.php?page=dashboard') ?>" aria-label="Insight CX - início"><img class="brand-logo" src="assets/img/logo-insight-cx.png" alt="Insight CX — Transformando experiências em inteligência"></a>
 
         <div class="sidebar-caption">MENU PRINCIPAL</div>
         <nav class="main-nav" aria-label="Menu principal">
             <a href="<?= $e($dashboardUrl ?? '#') ?>" class="nav-link">
-                <span class="nav-icon">◫</span><span>Visão geral</span>
+                <span class="nav-icon">▦</span><span>Visão geral</span>
             </a>
             <a href="<?= $e($clientsUrl ?? '#') ?>" class="nav-link">
-                <span class="nav-icon">♧</span><span>Clientes</span>
+                <span class="nav-icon">♙</span><span>Clientes</span>
             </a>
             <a href="<?= $e($feedbacksUrl ?? '#') ?>" class="nav-link is-active" aria-current="page">
                 <span class="nav-icon">▤</span><span>Feedbacks</span>
