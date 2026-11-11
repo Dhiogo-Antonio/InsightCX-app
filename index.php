@@ -19,6 +19,17 @@ if ($page === 'login') {
     require __DIR__ . '/views/login.php'; exit;
 }
 if (empty($_SESSION['usuario_email'])) { header('Location: index.php?page=login'); exit; }
+$integratedPages = [
+    'feedbacks' => __DIR__ . '/views/feedbacks.php',
+    'analises' => __DIR__ . '/views/analises.php',
+    'relatorios' => __DIR__ . '/views/relatorios.php',
+    'feedback-detalhe' => __DIR__ . '/views/feedback-detalhe.php',
+];
+require __DIR__ . '/app/controllers/page-data.php';
+if (isset($integratedPages[$page])) {
+    require $integratedPages[$page];
+    exit;
+}
 if (!in_array($page, $paginas, true)) $page = 'dashboard';
 $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Usuário';
 $tituloPagina = ['dashboard'=>'Visão geral','melhorias'=>'Melhorias','configuracoes'=>'Configurações'][$page];
@@ -31,10 +42,10 @@ $tituloPagina = ['dashboard'=>'Visão geral','melhorias'=>'Melhorias','configura
   <nav class="main-nav">
     <a class="<?= $page==='dashboard'?'active':'' ?>" href="index.php?page=dashboard"><span>▦</span>Visão geral</a>
     <a href="index.php?page=dashboard#clientes"><span>♙</span>Clientes</a>
-    <a href="index.php?page=dashboard#feedbacks"><span>▤</span>Feedbacks</a>
-    <a href="index.php?page=dashboard#analises"><span>⌁</span>Análises</a>
+    <a href="<?= htmlspecialchars($feedbacksUrl, ENT_QUOTES, 'UTF-8') ?>"><span>▤</span>Feedbacks</a>
+    <a href="<?= htmlspecialchars($analyticsUrl, ENT_QUOTES, 'UTF-8') ?>"><span>⌁</span>Análises</a>
     <a class="<?= $page==='melhorias'?'active':'' ?>" href="index.php?page=melhorias"><span>↗</span>Melhorias</a>
-    <a href="index.php?page=dashboard#relatorios"><span>▧</span>Relatórios</a>
+    <a href="<?= htmlspecialchars($reportsUrl, ENT_QUOTES, 'UTF-8') ?>"><span>▧</span>Relatórios</a>
     <a class="<?= $page==='configuracoes'?'active':'' ?>" href="index.php?page=configuracoes"><span>⚙</span>Configurações</a>
   </nav>
   <div class="sidebar-bottom"><div class="help-card"><b>?</b><strong>Precisa de ajuda?</strong><small>Acesse a central de suporte</small><a href="#suporte">Ver central</a></div><a class="logout-link" href="index.php?page=sair">⇥ &nbsp; Sair do sistema</a><div class="sidebar-footer">Uma solução <strong>CTI</strong></div></div>
