@@ -1,0 +1,8 @@
+(() => {
+ const tabs=document.querySelectorAll('[data-tab]');tabs.forEach(btn=>btn.addEventListener('click',()=>{tabs.forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.settings-tab-content').forEach(p=>p.hidden=p.id!=='tab-'+btn.dataset.tab)}));
+ const form=document.getElementById('profileForm');if(!form)return;const saved=(()=>{try{return JSON.parse(localStorage.getItem('cx_perfil')||'{}')}catch{return {}}})();
+ ['nome','cargo','email','telefone'].forEach(k=>{const el=document.getElementById('profile'+({nome:'Name',cargo:'Role',email:'Email',telefone:'Phone'}[k]));if(el&&saved[k])el.value=saved[k]});
+ const initials=document.getElementById('profileInitials');const updateInitials=()=>{const name=document.getElementById('profileName').value.trim();initials.textContent=name?name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase():'CX'};document.getElementById('profileName').addEventListener('input',updateInitials);updateInitials();
+ form.addEventListener('submit',e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form).entries());localStorage.setItem('cx_perfil',JSON.stringify(data));document.getElementById('profileMessage').textContent='Preferências salvas neste navegador.';updateInitials()});
+ const photo=document.getElementById('fotoPerfil');photo.addEventListener('change',()=>{const file=photo.files[0];if(!file)return;if(file.size>2*1024*1024){alert('A imagem deve ter no máximo 2 MB.');photo.value='';return}const reader=new FileReader();reader.onload=()=>{initials.innerHTML=`<img src="${reader.result}" alt="Prévia da foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`};reader.readAsDataURL(file)});
+})();
