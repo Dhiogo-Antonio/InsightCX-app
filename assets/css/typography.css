@@ -1,4 +1,0 @@
-body,
-body :not(svg):not(path):not(text):not(i):not([class*="icon"]):not([class*="Icon"]):not(.brand-mark) {
-    font-size: 14px !important;
-}

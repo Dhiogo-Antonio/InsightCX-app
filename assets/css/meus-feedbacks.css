@@ -1,0 +1,275 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #f1f5f9;
+    background: #080d1b;
+}
+
+.navbar {
+    min-height: 78px;
+    padding: 16px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    background: #10182b;
+    border-bottom: 1px solid #26334d;
+}
+
+.logo {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.logo span {
+    color: #8b7bff;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.navbar nav a {
+    color: #aab5ca;
+    font-size: 13px;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.navbar nav a:hover,
+.navbar nav a.ativo {
+    color: #a99cff;
+}
+
+.usuario {
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.container {
+    width: 86%;
+    max-width: 1100px;
+    margin: 55px auto;
+}
+
+.cabecalho {
+    margin-bottom: 35px;
+}
+
+.subtitulo {
+    color: #9b8cff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.cabecalho h1 {
+    margin: 12px 0;
+    font-size: 34px;
+}
+
+.cabecalho p {
+    color: #9caac1;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.lista-feedbacks {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.lista-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.lista-cabecalho h2 {
+    font-size: 19px;
+}
+
+.lista-cabecalho span {
+    color: #9caac1;
+    font-size: 12px;
+}
+
+.feedback-card {
+    padding: 25px;
+    background: #111b30;
+    border: 1px solid #273650;
+    border-radius: 13px;
+}
+
+.feedback-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.categoria {
+    color: #a99cff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.feedback-card h3 {
+    margin-top: 9px;
+    font-size: 17px;
+}
+
+.status {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status.pendente {
+    color: #fbbf24;
+    background: #fbbf2418;
+}
+
+.status.analise {
+    color: #60a5fa;
+    background: #60a5fa18;
+}
+
+.status.resolvido {
+    color: #4ade80;
+    background: #4ade8018;
+}
+
+.servico {
+    margin-top: 18px;
+    color: #a99cff;
+    font-size: 12px;
+}
+
+.comentario {
+    margin-top: 15px;
+    color: #bdc8da;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.feedback-rodape {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #273650;
+    color: #8290a8;
+    font-size: 11px;
+}
+
+.vazio {
+    padding: 55px 25px;
+    text-align: center;
+    background: #111b30;
+    border: 1px solid #273650;
+    border-radius: 13px;
+}
+
+.icone-vazio {
+    margin-bottom: 18px;
+    color: #9b8cff;
+    font-size: 38px;
+}
+
+.vazio h2 {
+    font-size: 20px;
+}
+
+.vazio p {
+    max-width: 450px;
+    margin: 12px auto 25px;
+    color: #9caac1;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.btn-enviar {
+    display: inline-block;
+    padding: 13px 20px;
+    color: #fff;
+    background: linear-gradient(120deg, #715cf5, #9274ff);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.mensagem {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.mensagem.erro {
+    color: #fca5a5;
+    background: #7f1d1d30;
+    border: 1px solid #ef444455;
+}
+
+.footer {
+    padding: 25px;
+    text-align: center;
+    color: #8290a8;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.footer span {
+    color: #a99cff;
+}
+
+@media (max-width: 850px) {
+    .navbar {
+        flex-direction: column;
+    }
+
+    .navbar nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .container {
+        width: 92%;
+        margin: 35px auto;
+    }
+}
+
+@media (max-width: 550px) {
+    .cabecalho h1 {
+        font-size: 27px;
+    }
+
+    .feedback-card {
+        padding: 18px;
+    }
+
+    .feedback-topo {
+        flex-direction: column;
+    }
+}
