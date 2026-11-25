@@ -1,0 +1,355 @@
+
+@import url("admin.css");
+
+/* ========================================
+   INSIGHT CX — TELA DE FEEDBACKS
+======================================== */
+
+.lista-feedbacks {
+    margin-top: 25px;
+}
+
+.lista-feedbacks > .painel-titulo {
+    margin-bottom: 20px;
+}
+
+.lista-feedbacks > .painel-titulo h2 {
+    color: #f1f5f9;
+    font-size: 18px;
+}
+
+.lista-feedbacks > .painel-titulo p {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Cartões */
+
+.card-feedback {
+    min-width: 0;
+    margin-bottom: 18px;
+    padding: 23px;
+    background: #141d32;
+    border: 1px solid #29354c;
+    border-radius: 12px;
+    transition: border-color .2s, transform .2s;
+}
+
+.card-feedback:hover {
+    border-color: #5553a5;
+    transform: translateY(-2px);
+}
+
+/* Cabeçalho */
+
+.feedback-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #29354c;
+}
+
+.feedback-cliente {
+    display: block;
+    margin-bottom: 5px;
+    color: #f1f5f9;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.feedback-email {
+    color: #94a3b8;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.feedback-etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.etiqueta {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(148, 163, 184, .12);
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Prioridades */
+
+.prioridade-alta {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .13);
+}
+
+.prioridade-media {
+    color: #fcd34d;
+    background: rgba(245, 158, 11, .13);
+}
+
+.prioridade-baixa {
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, .13);
+}
+
+/* Status */
+
+.status-aguardando_administrador {
+    color: #fcd34d;
+    background: rgba(245, 158, 11, .13);
+}
+
+.status-em_atendimento {
+    color: #93c5fd;
+    background: rgba(59, 130, 246, .13);
+}
+
+.status-finalizado {
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, .13);
+}
+
+/* Informações do feedback */
+
+.feedback-informacoes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    padding: 18px 0;
+    border-bottom: 1px solid #29354c;
+}
+
+.feedback-informacoes div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.feedback-informacoes span {
+    color: #64748b;
+    font-size: 10px;
+}
+
+.feedback-informacoes strong {
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Assunto e comentário */
+
+.feedback-conteudo {
+    padding: 20px 0;
+}
+
+.feedback-conteudo h3 {
+    margin-bottom: 10px;
+    color: #f1f5f9;
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.feedback-conteudo p {
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+/* Análise do chatbot */
+
+.analise-chatbot {
+    margin-bottom: 20px;
+    padding: 17px;
+    background: rgba(99, 102, 241, .07);
+    border: 1px solid rgba(99, 102, 241, .18);
+    border-radius: 9px;
+}
+
+.analise-chatbot > strong {
+    display: block;
+    margin-bottom: 9px;
+    color: #a5b4fc;
+    font-size: 12px;
+}
+
+.analise-chatbot p {
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+/* Palavras-chave */
+
+.palavras-chave {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 13px;
+}
+
+.palavras-chave > span:first-child {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.palavra {
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: rgba(139, 92, 246, .15);
+    color: #c4b5fd;
+    font-size: 10px;
+}
+
+/* Formulário de resposta */
+
+.form-resposta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-top: 17px;
+    border-top: 1px solid #29354c;
+}
+
+.form-resposta label {
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-resposta textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 13px;
+    resize: vertical;
+    background: #0b1020;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color .2s;
+}
+
+.form-resposta textarea:focus {
+    border-color: #8b5cf6;
+}
+
+.form-resposta textarea::placeholder {
+    color: #64748b;
+}
+
+/* Botão de resposta */
+
+.botao-responder {
+    padding: 11px 17px;
+    border: none;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .2s, transform .2s;
+}
+
+.botao-responder:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+/* Resposta registrada */
+
+.resposta-registrada {
+    padding: 17px;
+    background: rgba(16, 185, 129, .07);
+    border: 1px solid rgba(16, 185, 129, .2);
+    border-radius: 9px;
+}
+
+.resposta-registrada strong {
+    display: block;
+    margin-bottom: 9px;
+    color: #6ee7b7;
+    font-size: 12px;
+}
+
+.resposta-registrada p {
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.resposta-registrada small {
+    display: block;
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+/* Mensagens */
+
+.mensagem-feedback {
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.mensagem-feedback.sucesso {
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, .1);
+    border: 1px solid rgba(16, 185, 129, .2);
+}
+
+.mensagem-feedback.erro {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, .1);
+    border: 1px solid rgba(239, 68, 68, .2);
+}
+
+.lista-feedbacks .sem-dados,
+.lista-feedbacks .mensagem-erro {
+    padding: 18px;
+    border: 1px solid #29354c;
+    border-radius: 9px;
+    background: #141d32;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* Responsividade */
+
+@media (max-width: 750px) {
+    .feedback-informacoes {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .feedback-cabecalho {
+        flex-direction: column;
+    }
+
+    .card-feedback {
+        padding: 17px;
+    }
+}

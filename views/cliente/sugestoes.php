@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -88,7 +87,9 @@ function nomeStatusAtendimento($status)
     return $nomes[$status] ?? 'Não informado';
 }
 
+
 // Buscar sugestões de melhoria
+
 $resultado = requisicaoApi(
     $urlApi . '/sugestoes',
     $token
@@ -108,7 +109,9 @@ if ($resultado['status'] === 200) {
     $erro = 'Não foi possível carregar as sugestões. Tente novamente.';
 }
 
-// Buscar feedbacks e análises do chatbot
+
+// Buscar feedbacks e respostas do chatbot
+
 $resultadoFeedbacks = requisicaoApi(
     $urlApi . '/feedbacks',
     $token
@@ -138,12 +141,13 @@ if ($resultadoFeedbacks['status'] === 200) {
             ];
         }
     }
-
 } else {
     $erroFeedbacks = 'Não foi possível carregar as respostas do chatbot.';
 }
 
-// Ordenar retornos mais recentes primeiro
+
+// Ordenar retornos do mais recente para o mais antigo
+
 usort($retornos, function ($a, $b) {
     return strtotime($b['analise']['created_at'] ?? '')
         <=> strtotime($a['analise']['created_at'] ?? '');
@@ -205,7 +209,8 @@ usort($retornos, function ($a, $b) {
 
         </section>
 
-        <!-- Respostas do chatbot -->
+
+        <!-- Respostas dos feedbacks -->
 
         <section class="lista-sugestoes">
 
@@ -264,7 +269,14 @@ usort($retornos, function ($a, $b) {
 
                         $resposta = $analise['resposta_gerada'] ?? null;
 
-                        $prioridade = $analise['prioridade_identificada'] ?? 'Não informada';
+                        $respostaAdministrador =
+                            $analise['resposta_administrador'] ?? null;
+
+                        $tipoAtendimento =
+                            $analise['tipo_atendimento'] ?? '';
+
+                        $prioridade =
+                            $analise['prioridade_identificada'] ?? 'Não informada';
 
                         $servico = $feedback['servico']['nome']
                             ?? 'Serviço não informado';
@@ -332,68 +344,110 @@ usort($retornos, function ($a, $b) {
                                 <?php if (!empty($resposta)): ?>
 
                                     <strong>
-                                        Resposta do chatbot
+                                        Orientação do assistente virtual
                                     </strong>
 
                                     <p>
                                         <?= nl2br(escapar($resposta)) ?>
                                     </p>
 
-                                <?php elseif ($statusAtendimento === 'aguardando_administrador'): ?>
+                                <?php endif; ?>
+
+
+                                <?php if ($tipoAtendimento === 'manual'): ?>
 
                                     <strong>
-                                        Feedback encaminhado para análise
+                                        Acompanhamento da equipe
                                     </strong>
 
                                     <p>
-                                        Sua manifestação foi identificada
-                                        e encaminhada para a equipe responsável.
-                                        Assim que houver um retorno,
-                                        ele será disponibilizado aqui.
-                                    </p>
-
-                                <?php elseif ($statusAtendimento === 'aguardando_analise'): ?>
-
-                                    <strong>
-                                        Feedback em análise
-                                    </strong>
-
-                                    <p>
-                                        Seu feedback está aguardando análise.
-                                    </p>
-
-                                <?php elseif ($statusAtendimento === 'em_atendimento'): ?>
-
-                                    <strong>
-                                        Atendimento em andamento
-                                    </strong>
-
-                                    <p>
-                                        A equipe responsável está trabalhando
-                                        na sua solicitação.
-                                    </p>
-
-                                <?php elseif ($statusAtendimento === 'finalizado'): ?>
-
-                                    <strong>
-                                        Atendimento finalizado
-                                    </strong>
-
-                                    <p>
-                                        O atendimento deste feedback foi finalizado.
-                                    </p>
-
-                                <?php else: ?>
-
-                                    <strong>
-                                        Análise registrada
-                                    </strong>
-
-                                    <p>
-                                        Seu feedback possui uma análise registrada.
+                                        Seu feedback também foi encaminhado
+                                        ao administrador para acompanhamento.
                                     </p>
 
                                 <?php endif; ?>
+
+                                <div class="resposta">
+                                    <?php if (!empty($respostaAdministrador)): ?>
+
+                                        <strong>
+                                            Resposta da equipe responsável
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            <?= nl2br(escapar($respostaAdministrador)) ?>
+                                        </p>
+
+                                    <?php elseif ($statusAtendimento === 'aguardando_administrador'): ?>
+
+
+                                        <strong>
+                                            Aguardando retorno da equipe
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            Seu feedback foi encaminhado ao administrador.
+                                            Assim que houver uma resposta,
+                                            ela aparecerá aqui.
+                                        </p>
+
+                                    <?php elseif ($statusAtendimento === 'em_atendimento'): ?>
+
+                                        <strong>
+                                            Atendimento em andamento
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            A equipe responsável está trabalhando
+                                            na sua solicitação.
+                                        </p>
+
+                                    <?php elseif ($statusAtendimento === 'aguardando_analise'): ?>
+
+                                        <strong>
+                                            Feedback em análise
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            Seu feedback está aguardando análise.
+                                        </p>
+
+                                    <?php elseif (
+                                        empty($resposta)
+                                        && empty($respostaAdministrador)
+                                        && $statusAtendimento === 'finalizado'
+                                    ): ?>
+
+                                        <strong>
+                                            Atendimento finalizado
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            O atendimento deste feedback foi finalizado.
+                                        </p>
+
+                                    <?php elseif (
+                                        empty($resposta)
+                                        && empty($respostaAdministrador)
+                                        && $tipoAtendimento !== 'manual'
+                                    ): ?>
+
+                                        <strong>
+                                            Análise registrada
+                                        </strong>
+                                        <br>
+
+                                        <p>
+                                            Seu feedback possui uma análise registrada.
+                                        </p>
+
+                                    <?php endif; ?>
+                                </div>
 
                             </div>
 
@@ -406,6 +460,10 @@ usort($retornos, function ($a, $b) {
             <?php endif; ?>
 
         </section>
+
+
+        <br>
+
 
         <!-- Sugestões de melhoria -->
 
@@ -529,4 +587,5 @@ usort($retornos, function ($a, $b) {
     </main>
 
 </body>
+
 </html>

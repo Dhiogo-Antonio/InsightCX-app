@@ -1,6 +1,7 @@
-
 <?php
 session_start();
+
+$paginaAtual = basename($_SERVER['PHP_SELF']);
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['token'])) {
     header('Location: ../../index.php');
@@ -268,14 +269,19 @@ $feedbacksRecentes = array_slice($feedbacks, 0, 5);
         <span class="menu-titulo">MENU PRINCIPAL</span>
 
         <nav class="menu">
-            <a href="dashboard.php" class="ativo">
-                <span>▦</span>
+            <a href="dashboard.php" class="<?= $paginaAtual === 'dashboard.php' ? 'ativo' : '' ?>">
+                <i data-lucide="layout-dashboard"></i>
                 Dashboard
             </a>
 
-            <a href="sugestoes.php">
-                <span>✧</span>
+            <a href="sugestoes.php" class="<?= $paginaAtual === 'sugestoes.php' ? 'ativo' : '' ?>">
+                <i data-lucide="lightbulb"></i>
                 Sugestões
+            </a>
+
+            <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
+                <i data-lucide="message-square-text"></i>
+                Feedbacks
             </a>
         </nav>
 
@@ -594,6 +600,11 @@ $feedbacksRecentes = array_slice($feedbacks, 0, 5);
         </section>
 
     </main>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 
 </body>
+
 </html>

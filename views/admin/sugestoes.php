@@ -1,6 +1,7 @@
-
 <?php
 session_start();
+
+$paginaAtual = basename($_SERVER['PHP_SELF']);
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['token'])) {
     header('Location: ../../index.php');
@@ -93,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'POST',
             $dados
         );
-
     } elseif ($acao === 'atualizar') {
 
         $id = (int) ($_POST['id'] ?? 0);
@@ -108,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'PUT',
             $dados
         );
-
     } elseif ($acao === 'excluir') {
 
         $id = (int) ($_POST['id'] ?? 0);
@@ -118,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $token,
             'DELETE'
         );
-
     } elseif ($acao === 'sair') {
 
         requisicaoApi($urlApi . '/logout', $token, 'POST');
@@ -128,7 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         header('Location: ../../index.php');
         exit;
-
     } else {
         $resposta = [
             'status' => 400,
@@ -246,14 +243,19 @@ usort($sugestoes, function ($a, $b) {
         <span class="menu-titulo">MENU PRINCIPAL</span>
 
         <nav class="menu">
-            <a href="dashboard.php">
-                <span>▦</span>
+            <a href="dashboard.php" class="<?= $paginaAtual === 'dashboard.php' ? 'ativo' : '' ?>">
+                <i data-lucide="layout-dashboard"></i>
                 Dashboard
             </a>
 
-            <a href="sugestoes.php" class="ativo">
-                <span>✧</span>
+            <a href="sugestoes.php" class="<?= $paginaAtual === 'sugestoes.php' ? 'ativo' : '' ?>">
+                <i data-lucide="lightbulb"></i>
                 Sugestões
+            </a>
+
+            <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
+                <i data-lucide="message-square-text"></i>
+                Feedbacks
             </a>
         </nav>
 
@@ -519,6 +521,11 @@ usort($sugestoes, function ($a, $b) {
         </section>
 
     </main>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 
 </body>
+
 </html>
