@@ -1,10 +1,9 @@
+
 <?php
 
 session_start();
 
-
 $paginaAtual = basename($_SERVER['PHP_SELF']);
-
 
 if (!isset($_SESSION['usuario']) || !isset($_SESSION['token'])) {
     header('Location: ../../index.php');
@@ -67,6 +66,9 @@ function requisicaoApi($url, $token, $metodo = 'GET', $corpo = null)
     ];
 }
 
+/**
+ * Proteger a saída de dados.
+ */
 function escapar($valor)
 {
     return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
@@ -84,10 +86,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
     exit;
 }
 
-// Registrar resposta do administrador.
+// Mensagens da página.
 $mensagem = '';
 $tipoMensagem = '';
 
+// Aprovar resposta gerada pela IA.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aprovar'])) {
+
+    $idAnalise = filter_input(INPUT_POST, 'id_analise', FILTER_VALIDATE_INT);
+
+    if (!$idAnalise) {
+
+        $mensagem = 'Análise inválida.';
+        $tipoMensagem = 'erro';
+
+    } else {
+
+        $resultadoAprovacao = requisicaoApi(
+            $urlApi . '/analises-chatbot/' . $idAnalise . '/aprovar',
+            $token,
+            'PUT'
+        );
+
+        if ($resultadoAprovacao['status'] === 200) {
+
+            $_SESSION['mensagem_feedback'] = 'Resposta da IA aprovada com sucesso!';
+            $_SESSION['tipo_mensagem_feedback'] = 'sucesso';
+
+            header('Location: feedbacks.php');
+            exit;
+        }
+
+        $mensagem = $resultadoAprovacao['dados']['message']
+            ?? 'Não foi possível aprovar a resposta.';
+
+        $tipoMensagem = 'erro';
+    }
+}
+
+// Recusar resposta gerada pela IA.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recusar'])) {
+
+    $idAnalise = filter_input(INPUT_POST, 'id_analise', FILTER_VALIDATE_INT);
+    $motivo = trim($_POST['motivo_recusa'] ?? '');
+
+    if (!$idAnalise) {
+
+        $mensagem = 'Análise inválida.';
+        $tipoMensagem = 'erro';
+
+    } else {
+
+        $resultadoRecusa = requisicaoApi(
+            $urlApi . '/analises-chatbot/' . $idAnalise . '/recusar',
+            $token,
+            'PUT',
+            [
+                'motivo_recusa' => $motivo
+            ]
+        );
+
+        if ($resultadoRecusa['status'] === 200) {
+
+            $_SESSION['mensagem_feedback'] = 'Resposta da IA recusada. Escreva uma resposta manual.';
+            $_SESSION['tipo_mensagem_feedback'] = 'sucesso';
+
+            header('Location: feedbacks.php');
+            exit;
+        }
+
+        $mensagem = $resultadoRecusa['dados']['message']
+            ?? 'Não foi possível recusar a resposta.';
+
+        $tipoMensagem = 'erro';
+    }
+}
+
+// Registrar resposta manual do administrador.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['responder'])) {
 
     $idAnalise = filter_input(INPUT_POST, 'id_analise', FILTER_VALIDATE_INT);
@@ -97,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['responder'])) {
 
         $mensagem = 'Informe uma resposta válida.';
         $tipoMensagem = 'erro';
+
     } else {
 
         $resultadoResposta = requisicaoApi(
@@ -115,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['responder'])) {
 
             header('Location: feedbacks.php');
             exit;
+
         } else {
 
             $mensagem = $resultadoResposta['dados']['message']
@@ -139,6 +216,7 @@ if (isset($_SESSION['mensagem_feedback'])) {
 $resultado = requisicaoApi($urlApi . '/feedbacks', $token);
 
 if ($resultado['status'] === 401) {
+
     $_SESSION = [];
     session_destroy();
 
@@ -152,16 +230,12 @@ $feedbacks = !$erroApi && is_array($resultado['dados'])
     ? $resultado['dados']
     : [];
 
-// Organizar as análises manuais.
+// Organizar todas as análises do chatbot.
 $analises = [];
 
 foreach ($feedbacks as $feedback) {
 
     foreach ($feedback['analises_chatbot'] ?? [] as $analise) {
-
-        if (($analise['tipo_atendimento'] ?? '') !== 'manual') {
-            continue;
-        }
 
         $analises[] = [
             'feedback' => $feedback,
@@ -179,20 +253,29 @@ usort($analises, function ($a, $b) {
 
 // Indicadores.
 $totalAnalises = count($analises);
+
 $aguardando = 0;
-$emAtendimento = 0;
+$aprovadas = 0;
+$recusadas = 0;
 $finalizadas = 0;
 
 foreach ($analises as $item) {
 
-    $status = $item['analise']['status_atendimento'] ?? '';
+    $analise = $item['analise'];
 
-    if ($status === 'aguardando_administrador') {
+    $statusAprovacao = $analise['status_aprovacao'] ?? '';
+    $status = $analise['status_atendimento'] ?? '';
+
+    if ($statusAprovacao === 'aguardando') {
         $aguardando++;
     }
 
-    if ($status === 'em_atendimento') {
-        $emAtendimento++;
+    if ($statusAprovacao === 'aprovada') {
+        $aprovadas++;
+    }
+
+    if ($statusAprovacao === 'recusada') {
+        $recusadas++;
     }
 
     if ($status === 'finalizado') {
@@ -239,6 +322,7 @@ foreach ($analises as $item) {
         <span class="menu-titulo">MENU PRINCIPAL</span>
 
         <nav class="menu">
+
             <a href="dashboard.php" class="<?= $paginaAtual === 'dashboard.php' ? 'ativo' : '' ?>">
                 <i data-lucide="layout-dashboard"></i>
                 Dashboard
@@ -253,6 +337,7 @@ foreach ($analises as $item) {
                 <i data-lucide="message-square-text"></i>
                 Feedbacks
             </a>
+
         </nav>
 
         <form method="POST" class="sair">
@@ -299,43 +384,51 @@ foreach ($analises as $item) {
         <section class="indicadores">
 
             <article class="card-indicador">
+
                 <div class="indicador-icone roxo">▤</div>
 
                 <div>
-                    <span>Atendimentos manuais</span>
+                    <span>Total de análises</span>
                     <h2><?= $erroApi ? '—' : $totalAnalises ?></h2>
                     <small>Feedbacks analisados</small>
                 </div>
+
             </article>
 
             <article class="card-indicador">
+
                 <div class="indicador-icone amarelo">◷</div>
 
                 <div>
-                    <span>Aguardando</span>
+                    <span>Aguardando aprovação</span>
                     <h2><?= $erroApi ? '—' : $aguardando ?></h2>
-                    <small>Precisam de resposta</small>
+                    <small>Precisam de avaliação</small>
                 </div>
+
             </article>
 
             <article class="card-indicador">
+
                 <div class="indicador-icone azul">↻</div>
 
                 <div>
-                    <span>Em atendimento</span>
-                    <h2><?= $erroApi ? '—' : $emAtendimento ?></h2>
-                    <small>Em análise pelo administrador</small>
+                    <span>Respostas recusadas</span>
+                    <h2><?= $erroApi ? '—' : $recusadas ?></h2>
+                    <small>Aguardando resposta manual</small>
                 </div>
+
             </article>
 
             <article class="card-indicador">
+
                 <div class="indicador-icone verde">✓</div>
 
                 <div>
-                    <span>Finalizados</span>
-                    <h2><?= $erroApi ? '—' : $finalizadas ?></h2>
-                    <small>Respostas registradas</small>
+                    <span>Respostas aprovadas</span>
+                    <h2><?= $erroApi ? '—' : $aprovadas ?></h2>
+                    <small>Liberadas aos clientes</small>
                 </div>
+
             </article>
 
         </section>
@@ -343,10 +436,12 @@ foreach ($analises as $item) {
         <section class="lista-feedbacks">
 
             <div class="painel-titulo">
+
                 <div>
                     <h2>Fila de atendimento</h2>
                     <p>Feedbacks que precisam de análise humana.</p>
                 </div>
+
             </div>
 
             <?php if ($erroApi): ?>
@@ -359,7 +454,7 @@ foreach ($analises as $item) {
             <?php elseif (empty($analises)): ?>
 
                 <p class="sem-dados">
-                    Nenhum feedback encaminhado para atendimento manual.
+                    Nenhum feedback encontrado.
                 </p>
 
             <?php else: ?>
@@ -374,7 +469,12 @@ foreach ($analises as $item) {
                     $cliente = $feedback['usuario'] ?? [];
 
                     $status = $analise['status_atendimento'] ?? '';
+                    $statusAprovacao = $analise['status_aprovacao'] ?? 'nao_gerada';
+
                     $prioridade = $analise['prioridade_identificada'] ?? 'media';
+
+                    $respostaIA = $analise['resposta_gerada'] ?? '';
+                    $respostaManual = $analise['resposta_administrador'] ?? '';
 
                     $palavras = $analise['palavras_chave'] ?? [];
 
@@ -385,6 +485,7 @@ foreach ($analises as $item) {
                         <div class="feedback-cabecalho">
 
                             <div>
+
                                 <span class="feedback-cliente">
                                     <?= escapar($cliente['nome'] ?? 'Cliente não identificado') ?>
                                 </span>
@@ -392,6 +493,7 @@ foreach ($analises as $item) {
                                 <span class="feedback-email">
                                     <?= escapar($cliente['email'] ?? '') ?>
                                 </span>
+
                             </div>
 
                             <div class="feedback-etiquetas">
@@ -412,6 +514,7 @@ foreach ($analises as $item) {
 
                             <div>
                                 <span>Serviço</span>
+
                                 <strong>
                                     <?= escapar($feedback['servico']['nome'] ?? 'Não informado') ?>
                                 </strong>
@@ -419,6 +522,7 @@ foreach ($analises as $item) {
 
                             <div>
                                 <span>Categoria</span>
+
                                 <strong>
                                     <?= escapar(ucfirst($feedback['categoria'] ?? '')) ?>
                                 </strong>
@@ -426,6 +530,7 @@ foreach ($analises as $item) {
 
                             <div>
                                 <span>Data</span>
+
                                 <strong>
                                     <?= !empty($feedback['created_at'])
                                         ? date('d/m/Y H:i', strtotime($feedback['created_at']))
@@ -475,60 +580,159 @@ foreach ($analises as $item) {
 
                         </div>
 
-                        <?php if ($status === 'finalizado'): ?>
+                        <?php if ($statusAprovacao === 'aprovada'): ?>
 
                             <div class="resposta-registrada">
 
-                                <strong>Resposta enviada ao cliente</strong>
+                                <strong>Resposta da IA aprovada e enviada ao cliente</strong>
 
                                 <p>
-                                    <?= nl2br(escapar(
-                                        $analise['resposta_administrador'] ?? ''
-                                    )) ?>
+                                    <?= nl2br(escapar($respostaIA)) ?>
                                 </p>
 
                                 <small>
-                                    <?php if (!empty($analise['respondido_administrador_em'])): ?>
-                                        Respondido em
+                                    <?php if (!empty($analise['resposta_enviada_em'])): ?>
+
+                                        Aprovada em
                                         <?= date(
                                             'd/m/Y H:i',
-                                            strtotime($analise['respondido_administrador_em'])
+                                            strtotime($analise['resposta_enviada_em'])
                                         ) ?>
+
                                     <?php endif; ?>
                                 </small>
 
                             </div>
 
+                        <?php elseif (
+                            $statusAprovacao === 'aguardando' &&
+                            !empty($respostaIA)
+                        ): ?>
+
+                            <div class="resposta-registrada">
+
+                                <strong>Resposta sugerida pela IA</strong>
+
+                                <p>
+                                    <?= nl2br(escapar($respostaIA)) ?>
+                                </p>
+
+                            </div>
+
+                            <div class="acoes-resposta">
+
+                                <form method="POST" class="form-resposta">
+
+                                    <input
+                                        type="hidden"
+                                        name="id_analise"
+                                        value="<?= (int) $analise['id'] ?>">
+
+                                    <button
+                                        type="submit"
+                                        name="aprovar"
+                                        class="botao-responder">
+                                        Aprovar resposta
+                                    </button>
+
+                                </form>
+
+                                <form method="POST" class="form-resposta">
+
+                                    <input
+                                        type="hidden"
+                                        name="id_analise"
+                                        value="<?= (int) $analise['id'] ?>">
+
+                                    <input
+                                        type="hidden"
+                                        name="motivo_recusa"
+                                        value="Resposta da IA recusada pelo administrador.">
+
+                                    <button
+                                        type="submit"
+                                        name="recusar"
+                                        class="botao-responder">
+                                        Recusar resposta
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        <?php elseif (
+                            $statusAprovacao === 'recusada' ||
+                            $statusAprovacao === 'nao_gerada'
+                        ): ?>
+
+                            <?php if (!empty($respostaManual)): ?>
+
+                                <div class="resposta-registrada">
+
+                                    <strong>Resposta manual enviada ao cliente</strong>
+
+                                    <p>
+                                        <?= nl2br(escapar($respostaManual)) ?>
+                                    </p>
+
+                                    <small>
+                                        <?php if (!empty($analise['respondido_administrador_em'])): ?>
+
+                                            Respondido em
+                                            <?= date(
+                                                'd/m/Y H:i',
+                                                strtotime($analise['respondido_administrador_em'])
+                                            ) ?>
+
+                                        <?php endif; ?>
+                                    </small>
+
+                                </div>
+
+                            <?php else: ?>
+
+                                <form method="POST" class="form-resposta">
+
+                                    <input
+                                        type="hidden"
+                                        name="id_analise"
+                                        value="<?= (int) $analise['id'] ?>">
+
+                                    <label for="resposta-<?= (int) $analise['id'] ?>">
+                                        Resposta ao cliente
+                                    </label>
+
+                                    <textarea
+                                        id="resposta-<?= (int) $analise['id'] ?>"
+                                        name="resposta_administrador"
+                                        rows="4"
+                                        placeholder="Escreva uma resposta para o cliente..."
+                                        required
+                                        minlength="3"
+                                        maxlength="5000"></textarea>
+
+                                    <button
+                                        type="submit"
+                                        name="responder"
+                                        class="botao-responder">
+                                        Registrar resposta
+                                    </button>
+
+                                </form>
+
+                            <?php endif; ?>
+
                         <?php else: ?>
 
-                            <form method="POST" class="form-resposta">
+                            <div class="resposta-registrada">
 
-                                <input
-                                    type="hidden"
-                                    name="id_analise"
-                                    value="<?= (int) $analise['id'] ?>">
+                                <strong>Resposta não disponível</strong>
 
-                                <label for="resposta-<?= (int) $analise['id'] ?>">
-                                    Resposta ao cliente
-                                </label>
+                                <p>
+                                    Verifique a situação desta análise.
+                                </p>
 
-                                <textarea
-                                    id="resposta-<?= (int) $analise['id'] ?>"
-                                    name="resposta_administrador"
-                                    rows="4"
-                                    placeholder="Escreva uma resposta para o cliente..."
-                                    required
-                                    minlength="3"
-                                    maxlength="5000"></textarea>
-
-                                <button
-                                    type="submit"
-                                    name="responder"
-                                    class="botao-responder">
-                                    Registrar resposta
-                                </button>
-
-                            </form>
+                            </div>
 
                         <?php endif; ?>
 
@@ -543,6 +747,7 @@ foreach ($analises as $item) {
     </main>
 
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
         lucide.createIcons();
     </script>

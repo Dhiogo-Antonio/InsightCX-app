@@ -237,22 +237,7 @@ usort($retornos, function ($a, $b) {
                     <?= escapar($erroFeedbacks) ?>
                 </div>
 
-            <?php elseif (empty($retornos)): ?>
 
-                <section class="vazio">
-
-                    <div class="icone-vazio">
-                        <span>✦</span>
-                    </div>
-
-                    <h2>Nenhum retorno disponível</h2>
-
-                    <p>
-                        Quando seus feedbacks forem analisados,
-                        os retornos aparecerão nesta área.
-                    </p>
-
-                </section>
 
             <?php else: ?>
 
