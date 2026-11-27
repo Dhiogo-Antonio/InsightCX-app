@@ -2,13 +2,13 @@
 <?php
 session_start();
 
-// Verifica se o cliente está autenticado
+
 if (empty($_SESSION['usuario'])) {
     header('Location: ../../index.php');
     exit;
 }
 
-// Recupera os dados do usuário
+
 $usuario = $_SESSION['usuario'];
 
 if (is_array($usuario)) {
@@ -21,7 +21,7 @@ if (is_array($usuario)) {
 
 $nome = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
 
-// Encerrar sessão
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
     session_unset();
     session_destroy();
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
     <header class="navbar">
 
         <a href="index.php" class="logo">
-            <div class="logo-icon">✦</div>
+            
 
             <div>
                 <h2>Insight <span>CX</span></h2>
@@ -65,7 +65,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
         </nav>
 
         <div class="user-area">
-            <div class="user-icon">👤</div>
+            <div class="user-icon">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M5 21a7 7 0 0 1 14 0"/>
+    </svg>
+</div>
 
             <span><?php echo $nome; ?></span>
 
@@ -78,10 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
 
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    
     <main class="container">
 
-        <!-- BOAS-VINDAS -->
+        
         <section class="welcome">
 
             <span class="tag">PORTAL DO CLIENTE</span>
@@ -99,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sair'])) {
 
         </section>
 
-        <!-- OPÇÕES PRINCIPAIS -->
+      
         <section class="options">
 
             <a href="enviar-feedback.php" class="option-card">

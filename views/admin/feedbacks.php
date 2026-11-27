@@ -302,7 +302,7 @@ foreach ($analises as $item) {
     <aside class="sidebar">
 
         <a href="dashboard.php" class="logo">
-            <span class="logo-icone">▥</span>
+            <span class="logo-icone"></span>
             Insight <span class="logo-destaque">CX</span>
         </a>
 
@@ -328,10 +328,7 @@ foreach ($analises as $item) {
                 Dashboard
             </a>
 
-            <a href="sugestoes.php" class="<?= $paginaAtual === 'sugestoes.php' ? 'ativo' : '' ?>">
-                <i data-lucide="lightbulb"></i>
-                Sugestões
-            </a>
+            
 
             <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
                 <i data-lucide="message-square-text"></i>

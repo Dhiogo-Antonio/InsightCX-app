@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -85,13 +84,11 @@ if ($respostaServicos['status'] >= 200 && $respostaServicos['status'] < 300) {
     if (!is_array($servicos)) {
         $servicos = [];
     }
-
 } elseif ($respostaServicos['status'] === 401) {
 
     session_destroy();
     header('Location: ../../index.php');
     exit;
-
 } else {
 
     $mensagem = 'Não foi possível carregar os serviços.';
@@ -115,15 +112,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ) {
         $mensagem = 'Preencha todos os campos.';
         $tipoMensagem = 'erro';
-
     } elseif (!is_numeric($dados['id_servico'])) {
         $mensagem = 'Selecione um serviço válido.';
         $tipoMensagem = 'erro';
-
     } elseif (!in_array($dados['categoria'], ['elogio', 'reclamacao'])) {
         $mensagem = 'Selecione uma categoria válida.';
         $tipoMensagem = 'erro';
-
     } else {
 
         $resposta = requisicaoApi(
@@ -152,7 +146,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'assunto' => '',
                 'comentario' => ''
             ];
-
         } elseif ($resposta['status'] === 422) {
 
             $mensagem = 'Verifique os dados informados.';
@@ -170,20 +163,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $tipoMensagem = 'erro';
-
         } elseif ($resposta['status'] === 401) {
 
             session_destroy();
             header('Location: ../../index.php');
             exit;
-
         } elseif ($resposta['status'] === 403) {
 
             $mensagem = $resposta['dados']['message']
                 ?? 'Você não tem permissão para enviar feedback para este serviço.';
 
             $tipoMensagem = 'erro';
-
         } else {
 
             $mensagem = $resposta['dados']['message']
@@ -271,28 +261,16 @@ function escapar($valor)
 
                 <div class="campo">
 
-                    <label for="id_servico">Serviço relacionado</label>
+                    <label for="servico">Serviço relacionado</label>
 
-                    <select name="id_servico" id="id_servico" required>
-
-                        <option value="">Selecione um serviço</option>
-
-                        <?php foreach ($servicos as $servico): ?>
-
-                            <option
-                                value="<?= escapar($servico['id'] ?? '') ?>"
-                                <?= (string) $dados['id_servico'] === (string) ($servico['id'] ?? '') ? 'selected' : '' ?>
-                            >
-                                <?= escapar($servico['nome'] ?? $servico['titulo'] ?? 'Serviço') ?>
-                            </option>
-
-                        <?php endforeach; ?>
-
-                    </select>
-
-                    <?php if (empty($servicos)): ?>
-                        <small>Nenhum serviço disponível no momento.</small>
-                    <?php endif; ?>
+                    <input
+                        type="text"
+                        name="servico"
+                        id="servico"
+                        placeholder="Digite o nome do serviço"
+                        value="<?= escapar($dados['servico']) ?>"
+                        maxlength="255"
+                        required>
 
                 </div>
 
@@ -306,15 +284,13 @@ function escapar($valor)
 
                         <option
                             value="elogio"
-                            <?= $dados['categoria'] === 'elogio' ? 'selected' : '' ?>
-                        >
+                            <?= $dados['categoria'] === 'elogio' ? 'selected' : '' ?>>
                             Elogio
                         </option>
 
                         <option
                             value="reclamacao"
-                            <?= $dados['categoria'] === 'reclamacao' ? 'selected' : '' ?>
-                        >
+                            <?= $dados['categoria'] === 'reclamacao' ? 'selected' : '' ?>>
                             Reclamação
                         </option>
 
@@ -333,8 +309,7 @@ function escapar($valor)
                         maxlength="255"
                         placeholder="Ex.: Qualidade do atendimento"
                         value="<?= escapar($dados['assunto']) ?>"
-                        required
-                    >
+                        required>
 
                 </div>
 
@@ -347,8 +322,7 @@ function escapar($valor)
                         id="comentario"
                         rows="6"
                         placeholder="Descreva sua experiência..."
-                        required
-                    ><?= escapar($dados['comentario']) ?></textarea>
+                        required><?= escapar($dados['comentario']) ?></textarea>
 
                 </div>
 
@@ -363,4 +337,5 @@ function escapar($valor)
     </main>
 
 </body>
+
 </html>

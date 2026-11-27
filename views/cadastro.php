@@ -435,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-                    <!-- Confirmar senha -->
+                    
                     <div class="group">
 
                         <label for="confirmar">

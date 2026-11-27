@@ -62,7 +62,7 @@ function requisicaoApi($url, $token)
     ];
 }
 
-// Busca os feedbacks do cliente.
+
 $resposta = requisicaoApi($urlApi . '/feedbacks', $token);
 
 if ($resposta['status'] >= 200 && $resposta['status'] < 300) {

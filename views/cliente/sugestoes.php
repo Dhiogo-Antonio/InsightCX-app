@@ -237,7 +237,22 @@ usort($retornos, function ($a, $b) {
                     <?= escapar($erroFeedbacks) ?>
                 </div>
 
+            <?php elseif (empty($retornos)): ?>
 
+                <section class="vazio">
+
+                    <div class="icone-vazio">
+                        <span>✦</span>
+                    </div>
+
+                    <h2>Nenhum retorno disponível</h2>
+
+                    <p>
+                        Quando seus feedbacks forem analisados,
+                        os retornos aparecerão nesta área.
+                    </p>
+
+                </section>
 
             <?php else: ?>
 
@@ -450,25 +465,11 @@ usort($retornos, function ($a, $b) {
         <br>
 
 
-        <!-- Sugestões de melhoria -->
+        
 
         <section class="lista-sugestoes">
 
-            <div class="resumo">
-
-                <div>
-                    <h2>Melhorias propostas</h2>
-
-                    <p>
-                        Confira as sugestões disponibilizadas para você.
-                    </p>
-                </div>
-
-                <span class="contador">
-                    <?= count($sugestoes) ?>
-                    <?= count($sugestoes) === 1 ? 'sugestão' : 'sugestões' ?>
-                </span>
-
+    
             </div>
 
             <?php if ($erro): ?>
@@ -477,26 +478,7 @@ usort($retornos, function ($a, $b) {
                     <?= escapar($erro) ?>
                 </div>
 
-            <?php elseif (empty($sugestoes)): ?>
-
-                <section class="vazio">
-
-                    <div class="icone-vazio">
-                        <span>✦</span>
-                    </div>
-
-                    <h2>Nenhuma sugestão disponível</h2>
-
-                    <p>
-                        Quando novas melhorias forem propostas para sua empresa,
-                        elas aparecerão nesta página.
-                    </p>
-
-                    <a href="meus-feedbacks.php" class="botao">
-                        Acompanhar meus feedbacks
-                    </a>
-
-                </section>
+            
 
             <?php else: ?>
 

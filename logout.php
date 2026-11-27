@@ -25,7 +25,6 @@ if (isset($_SESSION['token'])) {
     curl_close($curl);
 }
 
-// Encerra a sessão local mesmo se a API estiver indisponível.
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
