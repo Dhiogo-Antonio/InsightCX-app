@@ -269,17 +269,22 @@ $feedbacksRecentes = array_slice($feedbacks, 0, 5);
         <span class="menu-titulo">MENU PRINCIPAL</span>
 
         <nav class="menu">
+
             <a href="dashboard.php" class="<?= $paginaAtual === 'dashboard.php' ? 'ativo' : '' ?>">
                 <i data-lucide="layout-dashboard"></i>
                 Dashboard
             </a>
 
-    
-
             <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
                 <i data-lucide="message-square-text"></i>
                 Feedbacks
             </a>
+
+            <a href="historico-sugestoes.php" class="<?= $paginaAtual === 'historico-sugestoes.php' ? 'ativo' : '' ?>">
+                <i data-lucide="history"></i>
+                Histórico de sugestões
+            </a>
+
         </nav>
 
         <form method="POST" class="sair">

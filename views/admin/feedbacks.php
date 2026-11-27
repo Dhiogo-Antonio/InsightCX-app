@@ -327,11 +327,14 @@ foreach ($analises as $item) {
                 Dashboard
             </a>
 
-
-
             <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
                 <i data-lucide="message-square-text"></i>
                 Feedbacks
+            </a>
+
+            <a href="historico-sugestoes.php" class="<?= $paginaAtual === 'historico-sugestoes.php' ? 'ativo' : '' ?>">
+                <i data-lucide="history"></i>
+                Histórico de sugestões
             </a>
 
         </nav>

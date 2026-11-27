@@ -685,5 +685,61 @@ tbody tr:hover {
 }
 
 
+/* Modal de visualização da resposta */
+
+.modal-resposta {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.65);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-conteudo {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    padding: 30px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-conteudo h2 {
+    margin-bottom: 20px;
+}
+
+.modal-conteudo p {
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: #555;
+}
+
+.modal-fechar {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.botao-resposta {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botao-resposta:hover {
+    text-decoration: underline;
+}
+
 
 
