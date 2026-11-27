@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -14,10 +15,9 @@ $urlApi = 'http://127.0.0.1:8000/api';
 
 $mensagem = '';
 $tipoMensagem = '';
-$servicos = [];
 
 $dados = [
-    'id_servico' => '',
+    'servico' => '',
     'categoria' => '',
     'assunto' => '',
     'comentario' => ''
@@ -39,7 +39,7 @@ function requisicaoApi($url, $token, $metodo = 'GET', $dados = null)
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER => $cabecalhos,
         CURLOPT_CUSTOMREQUEST => $metodo,
-        CURLOPT_TIMEOUT => 15
+        CURLOPT_TIMEOUT => 30
     ]);
 
     if ($dados !== null) {
@@ -71,53 +71,28 @@ function requisicaoApi($url, $token, $metodo = 'GET', $dados = null)
     ];
 }
 
-
-$respostaServicos = requisicaoApi(
-    $urlApi . '/servicos',
-    $token
-);
-
-if ($respostaServicos['status'] >= 200 && $respostaServicos['status'] < 300) {
-
-    $servicos = $respostaServicos['dados'] ?? [];
-
-    if (!is_array($servicos)) {
-        $servicos = [];
-    }
-} elseif ($respostaServicos['status'] === 401) {
-
-    session_destroy();
-    header('Location: ../../index.php');
-    exit;
-} else {
-
-    $mensagem = 'Não foi possível carregar os serviços.';
-    $tipoMensagem = 'erro';
-}
-
-
 // Recebe o formulário.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $dados['id_servico'] = trim($_POST['id_servico'] ?? '');
+    $dados['servico'] = trim($_POST['servico'] ?? '');
     $dados['categoria'] = trim($_POST['categoria'] ?? '');
     $dados['assunto'] = trim($_POST['assunto'] ?? '');
     $dados['comentario'] = trim($_POST['comentario'] ?? '');
 
     if (
-        empty($dados['id_servico']) ||
+        empty($dados['servico']) ||
         empty($dados['categoria']) ||
         empty($dados['assunto']) ||
         empty($dados['comentario'])
     ) {
         $mensagem = 'Preencha todos os campos.';
         $tipoMensagem = 'erro';
-    } elseif (!is_numeric($dados['id_servico'])) {
-        $mensagem = 'Selecione um serviço válido.';
-        $tipoMensagem = 'erro';
+
     } elseif (!in_array($dados['categoria'], ['elogio', 'reclamacao'])) {
+
         $mensagem = 'Selecione uma categoria válida.';
         $tipoMensagem = 'erro';
+
     } else {
 
         $resposta = requisicaoApi(
@@ -125,11 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $token,
             'POST',
             [
-                'id_servico' => (int) $dados['id_servico'],
+                'servico' => $dados['servico'],
                 'assunto' => $dados['assunto'],
                 'comentario' => $dados['comentario'],
-                'categoria' => $dados['categoria'],
-                'prioridade' => 'media'
+                'categoria' => $dados['categoria']
             ]
         );
 
@@ -141,11 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipoMensagem = 'sucesso';
 
             $dados = [
-                'id_servico' => '',
+                'servico' => '',
                 'categoria' => '',
                 'assunto' => '',
                 'comentario' => ''
             ];
+
         } elseif ($resposta['status'] === 422) {
 
             $mensagem = 'Verifique os dados informados.';
@@ -163,17 +138,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $tipoMensagem = 'erro';
+
         } elseif ($resposta['status'] === 401) {
 
+            session_unset();
             session_destroy();
+
             header('Location: ../../index.php');
             exit;
-        } elseif ($resposta['status'] === 403) {
 
-            $mensagem = $resposta['dados']['message']
-                ?? 'Você não tem permissão para enviar feedback para este serviço.';
-
-            $tipoMensagem = 'erro';
         } else {
 
             $mensagem = $resposta['dados']['message']
@@ -267,9 +240,9 @@ function escapar($valor)
                         type="text"
                         name="servico"
                         id="servico"
-                        placeholder="Digite o nome do serviço"
-                        value="<?= escapar($dados['servico']) ?>"
                         maxlength="255"
+                        placeholder="Digite o nome do serviço..."
+                        value="<?= escapar($dados['servico']) ?>"
                         required>
 
                 </div>
@@ -282,14 +255,12 @@ function escapar($valor)
 
                         <option value="">Selecione uma categoria</option>
 
-                        <option
-                            value="elogio"
+                        <option value="elogio"
                             <?= $dados['categoria'] === 'elogio' ? 'selected' : '' ?>>
                             Elogio
                         </option>
 
-                        <option
-                            value="reclamacao"
+                        <option value="reclamacao"
                             <?= $dados['categoria'] === 'reclamacao' ? 'selected' : '' ?>>
                             Reclamação
                         </option>

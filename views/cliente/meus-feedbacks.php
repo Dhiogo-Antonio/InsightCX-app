@@ -62,7 +62,6 @@ function requisicaoApi($url, $token)
     ];
 }
 
-
 $resposta = requisicaoApi($urlApi . '/feedbacks', $token);
 
 if ($resposta['status'] >= 200 && $resposta['status'] < 300) {
@@ -92,10 +91,13 @@ function nomeStatus($status)
     $nomes = [
         'pendente' => 'Pendente',
         'em analise' => 'Em análise',
-        'resolvido' => 'Resolvido'
+        'em_analise' => 'Em análise',
+        'em_atendimento' => 'Em atendimento',
+        'resolvido' => 'Resolvido',
+        'finalizado' => 'Finalizado'
     ];
 
-    return $nomes[$status] ?? ucfirst($status);
+    return $nomes[$status] ?? ucfirst(str_replace('_', ' ', $status));
 }
 
 function classeStatus($status)
@@ -103,7 +105,10 @@ function classeStatus($status)
     $classes = [
         'pendente' => 'pendente',
         'em analise' => 'analise',
-        'resolvido' => 'resolvido'
+        'em_analise' => 'analise',
+        'em_atendimento' => 'analise',
+        'resolvido' => 'resolvido',
+        'finalizado' => 'resolvido'
     ];
 
     return $classes[$status] ?? 'pendente';
@@ -200,8 +205,10 @@ function classeStatus($status)
                 <?php foreach ($feedbacks as $feedback): ?>
 
                     <?php
+
                     $status = $feedback['status'] ?? 'pendente';
-                    $servico = $feedback['servico']['nome'] ?? 'Serviço não informado';
+
+                    $servico = $feedback['servico'] ?? 'Serviço não informado';
 
                     $data = 'Data não disponível';
 
@@ -214,6 +221,45 @@ function classeStatus($status)
                     }
 
                     $categoria = $feedback['categoria'] ?? '';
+
+                    $analisesChatbot = $feedback['analises_chatbot'] ?? [];
+
+                    $analiseIA = !empty($analisesChatbot)
+                        ? end($analisesChatbot)
+                        : [];
+
+                    $statusAprovacao = $analiseIA['status_aprovacao'] ?? '';
+
+                    $respostaIA = $analiseIA['resposta_gerada'] ?? '';
+
+                    $respostaManual = $analiseIA['resposta_administrador'] ?? '';
+
+                    $respostaEnviada = !empty($analiseIA['resposta_enviada_em']);
+
+                    $respostaFinal = '';
+
+                    // Resposta manual enviada pelo administrador.
+                    if (
+                        !empty($respostaManual) &&
+                        $respostaEnviada
+                    ) {
+                        $respostaFinal = $respostaManual;
+
+                    // Resposta automática aprovada e enviada.
+                    } elseif (
+                        $statusAprovacao === 'aprovada' &&
+                        !empty($respostaIA) &&
+                        $respostaEnviada
+                    ) {
+                        $respostaFinal = $respostaIA;
+                    }
+
+                    // Estados em que ainda não há resposta disponível.
+                    $respostaPendente = in_array(
+                        $statusAprovacao,
+                        ['aguardando', 'nao_gerada']
+                    );
+
                     ?>
 
                     <article class="feedback-card">
@@ -221,6 +267,7 @@ function classeStatus($status)
                         <div class="feedback-topo">
 
                             <div>
+
                                 <span class="categoria">
                                     <?= escapar($categoria === 'elogio' ? 'Elogio' : 'Reclamação') ?>
                                 </span>
@@ -228,6 +275,7 @@ function classeStatus($status)
                                 <h3>
                                     <?= escapar($feedback['assunto'] ?? 'Sem assunto') ?>
                                 </h3>
+
                             </div>
 
                             <span class="status <?= escapar(classeStatus($status)) ?>">
@@ -244,8 +292,58 @@ function classeStatus($status)
                             <?= nl2br(escapar($feedback['comentario'] ?? '')) ?>
                         </p>
 
+                        <?php if (!empty($respostaFinal)): ?>
+
+                            <div class="resposta-ia">
+
+                                <div class="resposta-ia-titulo">
+                                    <strong>Resposta da empresa</strong>
+                                    <span>
+                                        <?= !empty($respostaManual)
+                                            ? 'Administrador'
+                                            : 'Assistente virtual' ?>
+                                    </span>
+                                </div>
+
+                                <p>
+                                    <?= nl2br(escapar($respostaFinal)) ?>
+                                </p>
+
+                                <?php if ($respostaEnviada): ?>
+
+                                    <small>
+                                        Respondido em
+                                        <?= date(
+                                            'd/m/Y H:i',
+                                            strtotime($analiseIA['resposta_enviada_em'])
+                                        ) ?>
+                                    </small>
+
+                                <?php endif; ?>
+
+                            </div>
+
+                        <?php elseif (!empty($analiseIA)): ?>
+
+                            <div class="resposta-ia-pendente">
+
+                                <strong>Seu feedback está sendo acompanhado.</strong>
+
+                                <p>
+                                    Nossa equipe está acompanhando sua manifestação
+                                    e você poderá consultar a resposta por aqui.
+                                </p>
+
+                            </div>
+
+                        <?php endif; ?>
+
                         <div class="feedback-rodape">
-                            <span>Enviado em <?= escapar($data) ?></span>
+
+                            <span>
+                                Enviado em <?= escapar($data) ?>
+                            </span>
+
                         </div>
 
                     </article>
@@ -259,12 +357,15 @@ function classeStatus($status)
     </main>
 
     <footer class="footer">
+
         <p>
             © <?= date('Y') ?> Insight CX. Todos os direitos reservados.
         </p>
 
         <span>Sua experiência importa.</span>
+
     </footer>
 
 </body>
+
 </html>

@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -328,7 +327,7 @@ foreach ($analises as $item) {
                 Dashboard
             </a>
 
-            
+
 
             <a href="feedbacks.php" class="<?= $paginaAtual === 'feedbacks.php' ? 'ativo' : '' ?>">
                 <i data-lucide="message-square-text"></i>
@@ -513,7 +512,7 @@ foreach ($analises as $item) {
                                 <span>Serviço</span>
 
                                 <strong>
-                                    <?= escapar($feedback['servico']['nome'] ?? 'Não informado') ?>
+                                    <?= escapar($feedback['servico'] ?? 'Não informado') ?>
                                 </strong>
                             </div>
 
@@ -575,6 +574,161 @@ foreach ($analises as $item) {
 
                             <?php endif; ?>
 
+                            <?php
+                            $sentimento = $analise['sentimento'] ?? 'Não identificado';
+
+                            $aspectosPositivos = $analise['aspectos_positivos'] ?? [];
+                            $aspectosNegativos = $analise['aspectos_negativos'] ?? [];
+                            $problemas = $analise['problemas_identificados'] ?? [];
+                            $recomendacoes = $analise['recomendacoes'] ?? [];
+
+                            $resumoGerencial = $analise['resumo_gerencial'] ?? '';
+
+                            $confianca = $analise['confianca_analise'] ?? null;
+                            ?>
+
+                            <div class="analise-gerencial">
+
+                                <h3>Análise gerencial da IA</h3>
+
+                                <div class="gerencial-resumo">
+
+                                    <span>Sentimento identificado</span>
+
+                                    <strong>
+                                        <?= escapar(ucfirst($sentimento)) ?>
+                                    </strong>
+
+                                </div>
+
+                                <?php if (!empty($resumoGerencial)): ?>
+
+                                    <div class="gerencial-bloco">
+
+                                        <h4>Resumo gerencial</h4>
+
+                                        <p>
+                                            <?= nl2br(escapar($resumoGerencial)) ?>
+                                        </p>
+
+                                    </div>
+
+                                <?php endif; ?>
+
+                                <div class="gerencial-listas">
+
+                                    <div class="gerencial-bloco positivo">
+
+                                        <h4>Pontos positivos</h4>
+
+                                        <?php if (!empty($aspectosPositivos)): ?>
+
+                                            <ul>
+                                                <?php foreach ($aspectosPositivos as $item): ?>
+                                                    <li><?= escapar($item) ?></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+
+                                        <?php else: ?>
+
+                                            <p>Nenhum ponto positivo identificado.</p>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                    <div class="gerencial-bloco negativo">
+
+                                        <h4>Pontos negativos</h4>
+
+                                        <?php if (!empty($aspectosNegativos)): ?>
+
+                                            <ul>
+                                                <?php foreach ($aspectosNegativos as $item): ?>
+                                                    <li><?= escapar($item) ?></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+
+                                        <?php else: ?>
+
+                                            <p>Nenhum ponto negativo identificado.</p>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="gerencial-bloco">
+
+                                    <h4>Problemas identificados</h4>
+
+                                    <?php if (!empty($problemas)): ?>
+
+                                        <ul>
+                                            <?php foreach ($problemas as $problema): ?>
+                                                <li><?= escapar($problema) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+
+                                    <?php else: ?>
+
+                                        <p>Nenhum problema específico identificado.</p>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                                <div class="gerencial-bloco recomendacoes">
+
+                                    <h4>Recomendações da IA</h4>
+
+                                    <?php if (!empty($recomendacoes)): ?>
+
+                                        <ul>
+                                            <?php foreach ($recomendacoes as $recomendacao): ?>
+                                                <li><?= escapar($recomendacao) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+
+                                    <?php else: ?>
+
+                                        <p>Nenhuma recomendação disponível.</p>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                                <?php if ($confianca !== null): ?>
+
+                                    <div class="gerencial-confianca">
+
+                                        Confiança da análise:
+                                        <strong>
+                                            <?= number_format((float) $confianca, 1, ',', '.') ?>%
+                                        </strong>
+
+                                    </div>
+
+                                <?php endif; ?>
+
+                                <?php if ($prioridade === 'alta'): ?>
+
+                                    <div class="gerencial-alerta">
+
+                                        <strong>Atenção: feedback de alta prioridade</strong>
+
+                                        <p>
+                                            Este caso precisa de acompanhamento humano
+                                            pela equipe responsável.
+                                        </p>
+
+                                    </div>
+
+                                <?php endif; ?>
+
+                            </div>
+
                         </div>
 
                         <?php if ($statusAprovacao === 'aprovada'): ?>
@@ -620,15 +774,9 @@ foreach ($analises as $item) {
 
                                 <form method="POST" class="form-resposta">
 
-                                    <input
-                                        type="hidden"
-                                        name="id_analise"
-                                        value="<?= (int) $analise['id'] ?>">
+                                    <input type="hidden" name="id_analise" value="<?= (int) $analise['id'] ?>">
 
-                                    <button
-                                        type="submit"
-                                        name="aprovar"
-                                        class="botao-responder">
+                                    <button type="submit" name="aprovar" class="botao-responder">
                                         Aprovar resposta
                                     </button>
 
@@ -636,20 +784,11 @@ foreach ($analises as $item) {
 
                                 <form method="POST" class="form-resposta">
 
-                                    <input
-                                        type="hidden"
-                                        name="id_analise"
-                                        value="<?= (int) $analise['id'] ?>">
+                                    <input type="hidden" name="id_analise" value="<?= (int) $analise['id'] ?>">
 
-                                    <input
-                                        type="hidden"
-                                        name="motivo_recusa"
-                                        value="Resposta da IA recusada pelo administrador.">
+                                    <input type="hidden" name="motivo_recusa" value="Resposta da IA recusada pelo administrador.">
 
-                                    <button
-                                        type="submit"
-                                        name="recusar"
-                                        class="botao-responder">
+                                    <button type="submit" name="recusar" class="botao-responder">
                                         Recusar resposta
                                     </button>
 
@@ -690,28 +829,17 @@ foreach ($analises as $item) {
 
                                 <form method="POST" class="form-resposta">
 
-                                    <input
-                                        type="hidden"
-                                        name="id_analise"
-                                        value="<?= (int) $analise['id'] ?>">
+                                    <input type="hidden" name="id_analise" value="<?= (int) $analise['id'] ?>">
 
                                     <label for="resposta-<?= (int) $analise['id'] ?>">
                                         Resposta ao cliente
                                     </label>
 
-                                    <textarea
-                                        id="resposta-<?= (int) $analise['id'] ?>"
-                                        name="resposta_administrador"
-                                        rows="4"
-                                        placeholder="Escreva uma resposta para o cliente..."
-                                        required
-                                        minlength="3"
+                                    <textarea id="resposta-<?= (int) $analise['id'] ?>" name="resposta_administrador" rows="4"
+                                        placeholder="Escreva uma resposta para o cliente..." required minlength="3"
                                         maxlength="5000"></textarea>
 
-                                    <button
-                                        type="submit"
-                                        name="responder"
-                                        class="botao-responder">
+                                    <button type="submit" name="responder" class="botao-responder">
                                         Registrar resposta
                                     </button>
 

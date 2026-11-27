@@ -571,7 +571,7 @@ $feedbacksRecentes = array_slice($feedbacks, 0, 5);
                                     <td><?= escapar($feedback['assunto'] ?? 'Sem assunto') ?></td>
 
                                     <td>
-                                        <?= escapar($feedback['servico']['nome'] ?? 'Não informado') ?>
+                                        <?= escapar($feedback['servico'] ?? 'Não informado') ?>
                                     </td>
 
                                     <td>

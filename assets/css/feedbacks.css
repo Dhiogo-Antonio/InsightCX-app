@@ -352,4 +352,113 @@
     .card-feedback {
         padding: 17px;
     }
+
+
+.analise-gerencial {
+    margin-top: 22px;
+    padding: 22px;
+    background: #171b20;
+    border: 1px solid #303943;
+    border-radius: 14px;
+}
+
+.analise-gerencial h3 {
+    color: #e7edf4;
+    margin: 0 0 20px;
+}
+
+.gerencial-resumo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px;
+    background: #202832;
+    border-radius: 9px;
+    margin-bottom: 16px;
+}
+
+.gerencial-resumo span {
+    color: #aab6c3;
+}
+
+.gerencial-resumo strong {
+    color: #8fc5ff;
+    text-transform: capitalize;
+}
+
+.gerencial-listas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.gerencial-bloco {
+    padding: 16px;
+    margin-bottom: 14px;
+    background: #20262e;
+    border-radius: 10px;
+}
+
+.gerencial-bloco h4 {
+    margin: 0 0 12px;
+    color: #dce5ee;
+}
+
+.gerencial-bloco p,
+.gerencial-bloco li {
+    color: #b8c2cd;
+    line-height: 1.7;
+}
+
+.gerencial-bloco ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.gerencial-bloco.positivo {
+    border-left: 3px solid #42b883;
+}
+
+.gerencial-bloco.negativo {
+    border-left: 3px solid #d97777;
+}
+
+.gerencial-bloco.recomendacoes {
+    border-left: 3px solid #70a8e8;
+}
+
+.gerencial-confianca {
+    color: #aab6c3;
+    margin-top: 12px;
+}
+
+.gerencial-confianca strong {
+    color: #8fc5ff;
+}
+
+.gerencial-alerta {
+    margin-top: 18px;
+    padding: 16px;
+    background: #35271d;
+    border: 1px solid #80552d;
+    border-radius: 10px;
+}
+
+.gerencial-alerta strong {
+    color: #ffc27a;
+}
+
+.gerencial-alerta p {
+    color: #e3c9a9;
+    margin-bottom: 0;
+}
+
+@media (max-width: 650px) {
+    .gerencial-listas {
+        grid-template-columns: 1fr;
+    }
+}
+
 }

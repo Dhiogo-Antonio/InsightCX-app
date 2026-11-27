@@ -278,7 +278,7 @@ usort($retornos, function ($a, $b) {
                         $prioridade =
                             $analise['prioridade_identificada'] ?? 'Não informada';
 
-                        $servico = $feedback['servico']['nome']
+                        $servico = $feedback['servico']
                             ?? 'Serviço não informado';
 
                         $data = formatarData(
@@ -465,11 +465,26 @@ usort($retornos, function ($a, $b) {
         <br>
 
 
-        
+
+
 
         <section class="lista-sugestoes">
 
-    
+            <div class="resumo">
+
+                <div>
+                    <h2>Sugestões de melhoria</h2>
+
+                    <p>
+                        Confira as melhorias propostas pela equipe responsável.
+                    </p>
+                </div>
+
+                <span class="contador">
+                    <?= count($sugestoes) ?>
+                    <?= count($sugestoes) === 1 ? 'sugestão' : 'sugestões' ?>
+                </span>
+
             </div>
 
             <?php if ($erro): ?>
@@ -478,7 +493,22 @@ usort($retornos, function ($a, $b) {
                     <?= escapar($erro) ?>
                 </div>
 
-            
+            <?php elseif (empty($sugestoes)): ?>
+
+                <section class="vazio">
+
+                    <div class="icone-vazio">
+                        <span>✦</span>
+                    </div>
+
+                    <h2>Nenhuma sugestão disponível</h2>
+
+                    <p>
+                        Quando a equipe cadastrar sugestões de melhoria,
+                        elas aparecerão nesta área.
+                    </p>
+
+                </section>
 
             <?php else: ?>
 
@@ -487,12 +517,7 @@ usort($retornos, function ($a, $b) {
                     <?php foreach ($sugestoes as $sugestao): ?>
 
                         <?php
-
                         $status = strtolower($sugestao['status'] ?? '');
-
-                        $servico = $sugestao['servico']['nome']
-                            ?? 'Serviço não informado';
-
                         ?>
 
                         <article class="card-sugestao">
@@ -521,16 +546,6 @@ usort($retornos, function ($a, $b) {
 
                                 <div>
                                     <span class="info-label">
-                                        Serviço relacionado
-                                    </span>
-
-                                    <strong>
-                                        <?= escapar($servico) ?>
-                                    </strong>
-                                </div>
-
-                                <div>
-                                    <span class="info-label">
                                         Data da publicação
                                     </span>
 
@@ -550,6 +565,7 @@ usort($retornos, function ($a, $b) {
             <?php endif; ?>
 
         </section>
+
 
     </main>
 
